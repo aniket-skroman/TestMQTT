@@ -104,3 +104,9 @@ type DataReceiveResponse struct {
 	Status    bool               `json:"status"`
 	TimeStamp primitive.DateTime `json:"time_stamp"`
 }
+
+type DataReceiveForVehicelResponse struct {
+	UID       string             `json:"uid"`
+	Status    bool               `json:"status"`
+	TimeStamp primitive.DateTime `json:"time_stamp"`
+}
