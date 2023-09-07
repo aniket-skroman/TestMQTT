@@ -22,6 +22,9 @@ func updateTempCollection(hardwareData dto.VehicleDTO) error {
 		bson.E{Key: "uid", Value: hardwareData.UID},
 	}
 
+	hardwareData.Created_at = primitive.NewDateTimeFromTime(time.Now())
+	hardwareData.Updated_at = primitive.NewDateTimeFromTime(time.Now())
+
 	result := temp_collection.FindOneAndReplace(context.Background(), filter, &hardwareData, opts)
 
 	return result.Err()
@@ -54,6 +57,6 @@ func ProcessVehicleData(client mqtt.Client, msg mqtt.Message) {
 
 func notifyToHardwareFromSever(client mqtt.Client, response_data dto.DataReceiveResponse) {
 	json_data, _ := json.Marshal(response_data)
-	token := client.Publish("spiro/vehicle/SPIROVEH-KRZDEFAM/ack", 0, false, json_data)
+	token := client.Publish("spiro/vehicle/SPIRO-TEST-1/ack", 0, false, json_data)
 	token.Wait()
 }
