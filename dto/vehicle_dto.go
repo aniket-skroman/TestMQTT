@@ -89,6 +89,7 @@ type VehicleInfo struct {
 	Power             string             `json:"power"`
 	Location          string             `json:"location"`
 	DistanceTraveled  int                `json:"distance_traveled"`
+	TimeStamp         primitive.DateTime `json:"timeStamp" bson:"timeStamp"`
 	Created_at        primitive.DateTime `json:"createdAt" bson:"createdAt"`
 	Updated_at        primitive.DateTime `json:"updatedAt" bson:"updatedAt"`
 }

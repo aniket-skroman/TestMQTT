@@ -44,6 +44,7 @@ func updateVehicleInfo(vehicleInfo dto.VehicleInfo) error {
 		bson.E{Key: "vehiclename", Value: vehicleInfo.Vehiclename},
 	}
 
+	vehicleInfo.TimeStamp = primitive.NewDateTimeFromTime(time.Now())
 	vehicleInfo.Created_at = primitive.NewDateTimeFromTime(time.Now())
 	vehicleInfo.Updated_at = primitive.NewDateTimeFromTime(time.Now())
 
