@@ -35,7 +35,7 @@ func main() {
 
 	opts := mqtt.NewClientOptions()
 	//opts.AddBroker("tcp://test.mosquitto.org:1883")
-	opts.AddBroker("tcp://v-tro.in:1883")
+	opts.AddBroker("mqtt://v-tro.in:1883")
 	opts.SetClientID("go_mqtt_client")
 	opts.SetDefaultPublishHandler(messageHandler)
 
