@@ -14,6 +14,7 @@ import (
 var (
 	batteryHardwareTopic = "spiro/battery/in/hw"
 	vehicleHardwareTopic = "spiro/vehicle/in/hw"
+	vehicleInfoTopic     = "spiro/vehicle/in/hw/boot"
 )
 
 var messageHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
@@ -23,6 +24,9 @@ var messageHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Messa
 	} else if msg.Topic() == vehicleHardwareTopic {
 		fmt.Println("processing a vehicle data \n", msg.Topic())
 		vehicledataprocess.ProcessVehicleData(client, msg)
+	} else if msg.Topic() == vehicleInfoTopic {
+		fmt.Println("Processing a vehicle info data \n", msg.Topic())
+		vehicledataprocess.ProcessVehicleInfoData(client, msg)
 	}
 }
 
@@ -30,8 +34,8 @@ func main() {
 	//defer dbconfig.CloseClientDB()
 
 	opts := mqtt.NewClientOptions()
-	opts.AddBroker("tcp://test.mosquitto.org:1883")
-	// opts.AddBroker("tcp://localhost:1883")
+	//opts.AddBroker("tcp://test.mosquitto.org:1883")
+	opts.AddBroker("tcp://v-tro.in:1883")
 	opts.SetClientID("go_mqtt_client")
 	opts.SetDefaultPublishHandler(messageHandler)
 
@@ -45,10 +49,13 @@ func main() {
 
 	token := client.Subscribe(batteryHardwareTopic, 0, nil)
 	token2 := client.Subscribe(vehicleHardwareTopic, 0, nil)
+	token3 := client.Subscribe(vehicleInfoTopic, 0, nil)
+
 	t1 := token.Wait()
 	t2 := token2.Wait()
+	t3 := token3.Wait()
 
-	fmt.Println("Subscribed to topics ", t1, t2)
+	fmt.Println("Subscribed to topics ", t1, t2, t3)
 	go printSensorDataLoop()
 
 	// go func() {
