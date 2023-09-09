@@ -51,7 +51,7 @@ func main() {
 	opts := mqtt.NewClientOptions()
 	//opts.AddBroker("tcp://test.mosquitto.org:1883")
 	opts.AddBroker("mqtt://v-tro.in:1883")
-	opts.SetClientID("go_mqtt_client")
+	//opts.SetClientID("go_mqtt_client")
 	opts.SetOrderMatters(false)
 	opts.SetAutoReconnect(true)
 	opts.SetCleanSession(true)
