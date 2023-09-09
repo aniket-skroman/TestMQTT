@@ -49,8 +49,8 @@ type VehicleDTO struct {
 	Io         IoDTO              `json:"io" bson:"io"`
 	Pwr        PWRDTO             `json:"pwr" bson:"pwr"`
 	Dbg        DBGDTO             `json:"dbg" bson:"dbg"`
-	Created_at primitive.DateTime `json:"created_at" bson:"created_at"`
-	Updated_at primitive.DateTime `json:"updated_at" bson:"updated_at"`
+	Created_at primitive.DateTime `json:"createdAt" bson:"createdAt"`
+	Updated_at primitive.DateTime `json:"updatedAt" bson:"updatedAt"`
 }
 
 type VehicleInfo struct {
@@ -89,6 +89,6 @@ type VehicleInfo struct {
 	Power             string             `json:"power"`
 	Location          string             `json:"location"`
 	DistanceTraveled  int                `json:"distance_traveled"`
-	Created_at        primitive.DateTime `json:"created_at" bson:"created_at"`
-	Updated_at        primitive.DateTime `json:"updated_at" bson:"updated_at"`
+	Created_at        primitive.DateTime `json:"createdAt" bson:"createdAt"`
+	Updated_at        primitive.DateTime `json:"updatedAt" bson:"updatedAt"`
 }
