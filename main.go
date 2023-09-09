@@ -56,7 +56,7 @@ func main() {
 	t3 := token3.Wait()
 
 	fmt.Println("Subscribed to topics ", t1, t2, t3)
-	go printSensorDataLoop()
+	//go printSensorDataLoop()
 
 	// go func() {
 	// 	publish(client)
