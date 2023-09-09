@@ -47,9 +47,9 @@ func main() {
 
 	fmt.Println("Connected to MQTT broker")
 
-	token := client.Subscribe(batteryHardwareTopic, 0, nil)
-	token2 := client.Subscribe(vehicleHardwareTopic, 0, nil)
-	token3 := client.Subscribe(vehicleInfoTopic, 0, nil)
+	token := client.Subscribe(batteryHardwareTopic, 5, nil)
+	token2 := client.Subscribe(vehicleHardwareTopic, 5, nil)
+	token3 := client.Subscribe(vehicleInfoTopic, 5, nil)
 
 	t1 := token.Wait()
 	t2 := token2.Wait()
