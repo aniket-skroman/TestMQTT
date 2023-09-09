@@ -105,13 +105,17 @@ func ProcessVehicleInfoData(client mqtt.Client, msg mqtt.Message) {
 func notifyToHardwareFromSever(client mqtt.Client, response_data dto.DataReceiveForVehicelResponse) {
 	json_data, _ := json.Marshal(response_data)
 	fmt.Println("Ack from vehicle : ", response_data)
-	token := client.Publish(VEHICLE_HARDWARE_ACK, 0, false, json_data)
-	token.Wait()
+	if token := client.Publish(VEHICLE_HARDWARE_ACK, 0, false, json_data); token.Wait() && token.Error() != nil {
+		fmt.Println("failed to ACK for vehicle hardware data : ", token.Error())
+	}
+
 }
 
 func notifyToVehicleInfoFromSever(client mqtt.Client, response_data dto.DataReceiveForVehicelResponse) {
 	json_data, _ := json.Marshal(response_data)
 	fmt.Println("Ack from vehicle info : ", response_data)
-	token := client.Publish(VEHICLE_INFO_ACK, 0, false, json_data)
-	token.Wait()
+	if token := client.Publish(VEHICLE_INFO_ACK, 0, false, json_data); token.Wait() && token.Error() != nil {
+		fmt.Println("failed to ACK for vehicle info data : ", token.Error())
+	}
+
 }

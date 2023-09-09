@@ -1,12 +1,12 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"time"
 
 	batterydataprocess "github.com/aniket0951/testmqtt/battery-data-process"
+	dbconfig "github.com/aniket0951/testmqtt/db-config"
 	vehicledataprocess "github.com/aniket0951/testmqtt/vehicle-data-process"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
@@ -30,14 +30,35 @@ var messageHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Messa
 	}
 }
 
+var connectLostHandler mqtt.ConnectionLostHandler = func(client mqtt.Client, err error) {
+	fmt.Println("Connection has been lost for this Client : ")
+	client.Connect()
+
+}
+
+var reconnectingHandler mqtt.ReconnectHandler = func(client mqtt.Client, options *mqtt.ClientOptions) {
+
+	fmt.Println("Trying to reconnect")
+	if token := client.Connect(); token.Wait() && token.Error() != nil {
+		fmt.Println("Error reconnecting to MQTT broker:", token.Error())
+		os.Exit(1)
+	}
+}
+
 func main() {
-	//defer dbconfig.CloseClientDB()
+	defer dbconfig.CloseClientDB()
 
 	opts := mqtt.NewClientOptions()
 	//opts.AddBroker("tcp://test.mosquitto.org:1883")
 	opts.AddBroker("mqtt://v-tro.in:1883")
 	opts.SetClientID("go_mqtt_client")
+	opts.SetOrderMatters(false)
+	opts.SetAutoReconnect(true)
+	opts.SetCleanSession(true)
+
 	opts.SetDefaultPublishHandler(messageHandler)
+	opts.OnConnectionLost = connectLostHandler
+	opts.SetReconnectingHandler(reconnectingHandler)
 
 	client := mqtt.NewClient(opts)
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
@@ -47,51 +68,34 @@ func main() {
 
 	fmt.Println("Connected to MQTT broker")
 
-	token := client.Subscribe(batteryHardwareTopic, 5, nil)
-	token2 := client.Subscribe(vehicleHardwareTopic, 5, nil)
-	token3 := client.Subscribe(vehicleInfoTopic, 5, nil)
+	token := client.Subscribe(batteryHardwareTopic, 0, nil)
+	token2 := client.Subscribe(vehicleHardwareTopic, 0, nil)
+	token3 := client.Subscribe(vehicleInfoTopic, 0, nil)
 
 	t1 := token.Wait()
 	t2 := token2.Wait()
 	t3 := token3.Wait()
 
 	fmt.Println("Subscribed to topics ", t1, t2, t3)
+	if token.Error() != nil {
+		fmt.Println("Error from Token 1 : ", token.Error())
+	}
+	if token2.Error() != nil {
+		fmt.Println("Error from Token 2 : ", token2.Error())
+	}
+	if token3.Error() != nil {
+		fmt.Println("Error from Token 3 : ", token3.Error())
+	}
+
+	//NewConfig(client)
+
 	//go printSensorDataLoop()
-
-	// go func() {
-	// 	publish(client)
-	// 	publishDummyData(client)
-	// }()
-
-	// go publish(client)
-	// go publishDummyData(client)
 
 	// Keep the application running
 	for {
-		time.Sleep(time.Second)
+		time.Sleep(1 * time.Second)
 	}
-}
 
-type SensorData struct {
-	MSG string `json:"msg"`
-}
-
-var sensorDataList []SensorData
-
-func printSensorDataLoop() {
-	reader := bufio.NewReader(os.Stdin)
-	for {
-		_, err := reader.ReadString('\n')
-		if err != nil {
-			fmt.Println("Error reading input:", err)
-			continue
-		}
-
-		fmt.Println("Current sensor data:")
-		for _, data := range sensorDataList {
-			fmt.Printf("Temperature: %s\n", data.MSG)
-		}
-	}
 }
 
 func publish(client mqtt.Client) {
@@ -100,18 +104,6 @@ func publish(client mqtt.Client) {
 		text := fmt.Sprintf("Message %d", i)
 
 		token := client.Publish(batteryHardwareTopic, 0, false, text)
-		token.Wait()
-		time.Sleep(2 * time.Second)
-		fmt.Println(i+1, " loop has been done")
-	}
-}
-
-func publishDummyData(client mqtt.Client) {
-	num := 10
-	for i := 0; i < num; i++ {
-		text := fmt.Sprintf("Message %d", i)
-
-		token := client.Publish(vehicleHardwareTopic, 0, false, text)
 		token.Wait()
 		time.Sleep(2 * time.Second)
 		fmt.Println(i+1, " loop has been done")

@@ -3,6 +3,7 @@ package batterydataprocess
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	dbconfig "github.com/aniket0951/testmqtt/db-config"
@@ -102,6 +103,7 @@ func ProcessBatteryData(client mqtt.Client, msg mqtt.Message) {
 
 func notifyToHardwareFromSever(client mqtt.Client, response_data dto.DataReceiveResponse) {
 	json_data, _ := json.Marshal(response_data)
-	token := client.Publish("spiro/battery/SPIROBAT-CRFXUQOD/ack", 0, false, json_data)
-	token.Wait()
+	if token := client.Publish("spiro/battery/SPIROBAT-CRFXUQOD/ack", 0, false, json_data); token.Wait() && token.Error() != nil {
+		fmt.Println("Failed to ACK to battery data : ", token.Error())
+	}
 }
